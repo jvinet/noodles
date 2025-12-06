@@ -5,8 +5,8 @@ import (
 	"io"
 	"os"
 
-	"waypasta/internal/protocol"
-	"waypasta/internal/socket"
+	"noodles/internal/protocol"
+	"noodles/internal/socket"
 )
 
 // RunStore handles the store command

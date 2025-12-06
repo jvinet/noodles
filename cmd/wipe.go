@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"waypasta/internal/protocol"
-	"waypasta/internal/socket"
+	"noodles/internal/protocol"
+	"noodles/internal/socket"
 )
 
 // RunWipe handles the wipe command

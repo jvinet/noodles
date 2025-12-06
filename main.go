@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	"waypasta/cmd"
+	"noodles/cmd"
 )
+
+const version = "0.3"
 
 func main() {
 	if len(os.Args) < 2 {
@@ -39,20 +41,20 @@ func main() {
 }
 
 func printUsage() {
-	fmt.Println("WayPasta - Wayland clipboard manager")
+	fmt.Printf("Noodles v%s - Wayland clipboard manager\n", version)
 	fmt.Println()
 	fmt.Println("Usage:")
-	fmt.Println("  waypasta start          Start the daemon")
-	fmt.Println("  waypasta store          Store clipboard data from stdin")
-	fmt.Println("  waypasta list           List all clipboard items")
-	fmt.Println("  waypasta get <index>    Get clipboard item by index")
-	fmt.Println("  waypasta wipe           Clear all clipboard items")
-	fmt.Println("  waypasta stop           Stop the daemon")
-	fmt.Println("  waypasta help           Show this help message")
+	fmt.Println("  noodles start          Start the daemon")
+	fmt.Println("  noodles store          Store clipboard data from stdin")
+	fmt.Println("  noodles list           List all clipboard items")
+	fmt.Println("  noodles get <index>    Get clipboard item by index")
+	fmt.Println("  noodles wipe           Clear all clipboard items")
+	fmt.Println("  noodles stop           Stop the daemon")
+	fmt.Println("  noodles help           Show this help message")
 	fmt.Println()
 	fmt.Println("Integration with wl-paste:")
-	fmt.Println("  wl-paste --watch waypasta store")
+	fmt.Println("  wl-paste --watch noodles store")
 	fmt.Println()
 	fmt.Println("Select and copy clipboard item:")
-	fmt.Println("  waypasta list | rofi -dmenu | cut -f1 | waypasta get | wl-copy")
+	fmt.Println("  noodles list | rofi -dmenu | cut -f1 | noodles get | wl-copy")
 }

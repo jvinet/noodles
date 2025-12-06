@@ -6,8 +6,8 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"waypasta/internal/protocol"
-	"waypasta/internal/socket"
+	"noodles/internal/protocol"
+	"noodles/internal/socket"
 )
 
 const (

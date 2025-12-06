@@ -6,9 +6,9 @@ import (
 	"net"
 	"os"
 
-	"waypasta/internal/protocol"
-	"waypasta/internal/storage"
-	"waypasta/pkg/config"
+	"noodles/internal/protocol"
+	"noodles/internal/storage"
+	"noodles/pkg/config"
 )
 
 // Server represents a Unix socket server

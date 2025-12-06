@@ -6,8 +6,8 @@ import (
 	"net"
 	"os"
 
-	"waypasta/internal/protocol"
-	"waypasta/pkg/config"
+	"noodles/internal/protocol"
+	"noodles/pkg/config"
 )
 
 // Client provides methods to communicate with the daemon via Unix socket

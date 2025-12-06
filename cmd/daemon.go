@@ -10,9 +10,9 @@ import (
 	"strings"
 	"syscall"
 
-	"waypasta/internal/socket"
-	"waypasta/internal/storage"
-	"waypasta/pkg/config"
+	"noodles/internal/socket"
+	"noodles/internal/storage"
+	"noodles/pkg/config"
 )
 
 // RunDaemon starts the waypasta daemon
@@ -80,7 +80,7 @@ func RunDaemon() {
 // daemonize forks the process to run in the background
 func daemonize() {
 	// Check if we're already running as a daemon
-	if os.Getenv("WAYPASTA_DAEMON") == "1" {
+	if os.Getenv("NOODLES_DAEMON") == "1" {
 		// Already daemonized, just return
 		return
 	}
@@ -97,7 +97,7 @@ func daemonize() {
 	cmd := exec.Command(exe, args...)
 
 	// Set environment variable to mark as daemonized
-	cmd.Env = append(os.Environ(), "WAYPASTA_DAEMON=1")
+	cmd.Env = append(os.Environ(), "NOODLES_DAEMON=1")
 
 	// Detach from parent process
 	cmd.SysProcAttr = &syscall.SysProcAttr{

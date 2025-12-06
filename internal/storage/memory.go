@@ -6,7 +6,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"waypasta/internal/types"
+	"noodles/internal/types"
 )
 
 const (
@@ -18,7 +18,6 @@ const (
 type MemoryStore struct {
 	mu             sync.RWMutex
 	items          []types.ClipboardItem
-	nextIndex      int
 	maxItems       int
 	maxMemoryBytes int
 	totalBytes     int
@@ -28,7 +27,6 @@ type MemoryStore struct {
 func NewMemoryStore(maxItems, maxMemoryBytes int) *MemoryStore {
 	return &MemoryStore{
 		items:          make([]types.ClipboardItem, 0),
-		nextIndex:      0,
 		maxItems:       maxItems,
 		maxMemoryBytes: maxMemoryBytes,
 		totalBytes:     0,
@@ -57,46 +55,44 @@ func (m *MemoryStore) Store(data []byte) (int, error) {
 		m.evictOldest()
 	}
 
-	// If at max items, remove oldest item (first in slice)
+	// If at max items, remove oldest item (last in slice)
 	if len(m.items) >= m.maxItems {
 		m.evictOldest()
 	}
 
+	// Increment all existing item indexes by 1
+	for i := range m.items {
+		m.items[i].Index++
+	}
+
+	// New item always gets index 0
 	item := types.ClipboardItem{
-		Index:     m.nextIndex,
+		Index:     0,
 		Data:      data,
 		IsBinary:  !utf8.Valid(data),
 		Timestamp: time.Now(),
 		Size:      dataSize,
 	}
 
-	m.items = append(m.items, item)
+	// Prepend new item to the front of the slice
+	m.items = append([]types.ClipboardItem{item}, m.items...)
 	m.totalBytes += dataSize
-	index := m.nextIndex
-	m.nextIndex++
 
-	return index, nil
+	return 0, nil
 }
 
-// evictOldest removes the oldest item and shifts all indexes down
+// evictOldest removes the oldest item (last in slice, highest index)
 // Must be called with lock held
 func (m *MemoryStore) evictOldest() {
 	if len(m.items) == 0 {
 		return
 	}
 
-	// Remove first item and update total bytes
-	oldestItem := m.items[0]
+	// Remove last item (oldest, highest index) and update total bytes
+	lastIndex := len(m.items) - 1
+	oldestItem := m.items[lastIndex]
 	m.totalBytes -= oldestItem.Size
-	m.items = m.items[1:]
-
-	// Shift all indexes down by 1
-	for i := range m.items {
-		m.items[i].Index--
-	}
-
-	// Decrement nextIndex since we removed an item
-	m.nextIndex--
+	m.items = m.items[:lastIndex]
 }
 
 // List returns all stored clipboard items
@@ -130,6 +126,5 @@ func (m *MemoryStore) Wipe() {
 	defer m.mu.Unlock()
 
 	m.items = make([]types.ClipboardItem, 0)
-	m.nextIndex = 0
 	m.totalBytes = 0
 }

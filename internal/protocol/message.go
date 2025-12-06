@@ -1,6 +1,6 @@
 package protocol
 
-import "waypasta/internal/types"
+import "noodles/internal/types"
 
 // Command constants
 const (

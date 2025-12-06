@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"waypasta/internal/protocol"
-	"waypasta/internal/socket"
+	"noodles/internal/protocol"
+	"noodles/internal/socket"
 )
 
 // RunGet handles the get command
