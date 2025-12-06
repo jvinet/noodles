@@ -56,5 +56,5 @@ func printUsage() {
 	fmt.Println("  wl-paste --watch noodles store")
 	fmt.Println()
 	fmt.Println("Select and copy clipboard item:")
-	fmt.Println("  noodles list | rofi -dmenu | cut -f1 | noodles get | wl-copy")
+	fmt.Println("  noodles list | rofi -dmenu | cut -f1 | xargs -r sh -c 'noodles get \"$0\" | wl-copy'")
 }

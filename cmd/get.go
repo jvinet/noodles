@@ -14,7 +14,11 @@ import (
 // RunGet handles the get command
 func RunGet(args []string) {
 	// Parse index from args or stdin
-	index, err := parseIndex(args)
+	index, isEmpty, err := parseIndex(args)
+	if isEmpty {
+		// Empty input (user cancelled) - exit silently
+		os.Exit(1)
+	}
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to parse index: %v\n", err)
 		os.Exit(1)
@@ -45,7 +49,8 @@ func RunGet(args []string) {
 }
 
 // parseIndex parses the index from command-line args or stdin
-func parseIndex(args []string) (int, error) {
+// Returns (index, isEmpty, error)
+func parseIndex(args []string) (int, bool, error) {
 	var indexStr string
 
 	if len(args) > 0 {
@@ -55,20 +60,25 @@ func parseIndex(args []string) (int, error) {
 		// Read index from stdin
 		data, err := io.ReadAll(os.Stdin)
 		if err != nil {
-			return 0, fmt.Errorf("failed to read from stdin: %w", err)
+			return 0, false, fmt.Errorf("failed to read from stdin: %w", err)
 		}
 		indexStr = strings.TrimSpace(string(data))
+	}
+
+	// Check for empty input (cancel scenario)
+	if indexStr == "" {
+		return 0, true, nil
 	}
 
 	// Parse as integer
 	index, err := strconv.Atoi(indexStr)
 	if err != nil {
-		return 0, fmt.Errorf("invalid index '%s': %w", indexStr, err)
+		return 0, false, fmt.Errorf("invalid index '%s': %w", indexStr, err)
 	}
 
 	if index < 0 {
-		return 0, fmt.Errorf("index must be non-negative")
+		return 0, false, fmt.Errorf("index must be non-negative")
 	}
 
-	return index, nil
+	return index, false, nil
 }
