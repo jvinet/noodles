@@ -47,9 +47,14 @@ func (m *MemoryStore) Store(data []byte) (int, error) {
 
 	dataSize := len(data)
 
-	// Check if adding this item would exceed max memory
-	if m.totalBytes+dataSize > m.maxMemoryBytes {
-		return -1, fmt.Errorf("clipboard data would exceed maximum memory of %d bytes", m.maxMemoryBytes)
+	// Check if this single item exceeds max memory
+	if dataSize > m.maxMemoryBytes {
+		return -1, fmt.Errorf("clipboard item size (%d bytes) exceeds maximum memory limit (%d bytes)", dataSize, m.maxMemoryBytes)
+	}
+
+	// Evict oldest items until there's enough memory for the new item
+	for m.totalBytes+dataSize > m.maxMemoryBytes && len(m.items) > 0 {
+		m.evictOldest()
 	}
 
 	// If at max items, remove oldest item (first in slice)
