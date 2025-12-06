@@ -11,3 +11,7 @@ Requires [Go](https://golang.org/) and
 The simplicity and integration concepts are inspired from the
 [cliphist](https://github.com/sentriz/cliphist) project. The only reason Noodles
 exists is because I didn't want to store my clipboard items on-disk.
+
+## AI Notice
+
+This project was created with significant assistance from Anthropic Claude.
