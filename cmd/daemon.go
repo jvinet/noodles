@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"flag"
 	"fmt"
 	"net"
 	"os"
@@ -16,6 +17,15 @@ import (
 
 // RunDaemon starts the waypasta daemon
 func RunDaemon() {
+	// Parse command-line flags
+	fs := flag.NewFlagSet("start", flag.ExitOnError)
+	maxItems := fs.Int("max-items", 25, "Maximum number of clipboard items to store")
+	maxMemory := fs.Int("max-memory", 10, "Maximum memory in MB for clipboard storage")
+	fs.Parse(os.Args[2:]) // Skip "waypasta" and "start"
+
+	// Convert maxMemory from MB to bytes
+	maxMemoryBytes := *maxMemory * 1024 * 1024
+
 	// Check if daemon is already running by attempting to connect to socket
 	socketPath := config.GetSocketPath()
 	if conn, err := net.Dial("unix", socketPath); err == nil {
@@ -27,8 +37,8 @@ func RunDaemon() {
 	// Daemonize the process
 	daemonize()
 
-	// Initialize storage
-	store := storage.NewMemoryStore()
+	// Initialize storage with limits
+	store := storage.NewMemoryStore(*maxItems, maxMemoryBytes)
 
 	// Create and start socket server
 	server, err := socket.NewServer(store)
@@ -82,8 +92,9 @@ func daemonize() {
 		os.Exit(1)
 	}
 
-	// Prepare command to re-execute ourselves
-	cmd := exec.Command(exe, "start")
+	// Prepare command to re-execute ourselves with the same arguments
+	args := append([]string{"start"}, os.Args[2:]...)
+	cmd := exec.Command(exe, args...)
 
 	// Set environment variable to mark as daemonized
 	cmd.Env = append(os.Environ(), "WAYPASTA_DAEMON=1")
