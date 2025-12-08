@@ -36,6 +36,10 @@ func NewMemoryStore(maxItems, maxMemoryBytes int) *MemoryStore {
 // Store adds a new clipboard item to storage
 // Returns the index of the stored item or an error
 func (m *MemoryStore) Store(data []byte) (int, error) {
+	if len(data) < 1 {
+		// This is a silent no-op; we don't want to store empty strings.
+		return 0, nil
+	}
 	if len(data) > MaxClipboardSize {
 		return -1, fmt.Errorf("clipboard data exceeds maximum size of %d bytes", MaxClipboardSize)
 	}
